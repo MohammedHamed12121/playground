@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Xsl;
+using Client;
 
 namespace Server
 {
@@ -52,12 +55,10 @@ namespace Server
             {
                 while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine("Received: " + message);
-
-                    // Echo message back to the client
-                    byte[] response = Encoding.UTF8.GetBytes("Echo: " + message);
-                    stream.Write(response, 0, response.Length);
+                    string messageJson = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    ClientMessage message = JsonSerializer.Deserialize<ClientMessage>(messageJson);
+                    if (message == null) continue;
+                    Console.WriteLine($"Received message from {message.ClientName}: {message.Message} ({message.SentAt}) ");
                 }
             }
             catch (Exception ex)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Client
@@ -36,13 +37,14 @@ namespace Client
             }
         }
 
-        public void SendMessage(string message)
+        public void SendMessage(ClientMessage clientMessage)
         {
             if (stream != null && stream.CanWrite)
             {
+                //string message = $"{clientMessage.ClientName}: {clientMessage.Message} (Sent at: {clientMessage.SentAt})";
+                string message = JsonSerializer.Serialize(clientMessage);
                 byte[] data = Encoding.UTF8.GetBytes(message);
                 stream.Write(data, 0, data.Length);
-                Console.WriteLine("Message sent: " + message);
             }
         }
     }
